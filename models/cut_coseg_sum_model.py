@@ -30,7 +30,7 @@ class CUTCosegSumModel(BaseModel):
         parser.add_argument('--pcl_idt', type=util.str2bool, nargs='?', const=True, default=False,
                             help='use PCL loss for identity mapping: PCL(G(Y), Y))')
         parser.add_argument('--pcl_layers', type=str, default='0,4,8,12,16', help='compute PCL loss on which layers')
-        parser.add_argument('--pcl_includes_all_negatives_from_minibatch',
+        parser.add_argument('--nce_includes_all_negatives_from_minibatch',
                             type=util.str2bool, nargs='?', const=True, default=False,
                             help='(used for single image translation) If True, include the negatives from the other samples of the minibatch when computing the contrastive loss. Please see models/patchnce.py for more details.')
         parser.add_argument('--netF', type=str, default='label_sample', choices=['sample', 'reshape', 'mlp_sample'],
