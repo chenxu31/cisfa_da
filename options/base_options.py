@@ -79,6 +79,8 @@ class BaseOptions():
                             default=1, type=int,
                             help='Number of downsampling layers used by StyleGAN2Generator')
 
+        parser.add_argument('--task', default="pelvic", type=str, choices=["pelvic",], help='Number of downsampling layers used by StyleGAN2Generator')
+
         self.initialized = True
         return parser
 

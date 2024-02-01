@@ -47,6 +47,7 @@ class TrainOptions(BaseOptions):
                             help='temperature parameter for contrastive loss')
         parser.add_argument('--atten_weight', type=float, default=2,
                             help='temperature parameter for contrastive loss')
+        parser.add_argument('--debug', type=int, default=0, help='debug flag')
 
         self.isTrain = True
         return parser

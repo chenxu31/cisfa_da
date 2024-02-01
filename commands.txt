@@ -1,0 +1,2 @@
+# pelvic
+python train.py --model cut_atten_coseg_sum --batch_size 4 --n_epochs 100 --seg_start_point 0 --n_epochs_decay 0 --pcl_idt False --lambda_PCL 1. --dataroot D:\datasets\pelvic\h5_data --checkpoints_dir E:\training\checkpoints\cisfa --name pelvic --gpu_ids 0 
