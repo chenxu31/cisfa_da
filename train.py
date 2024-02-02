@@ -3,7 +3,7 @@ import torch
 from options.train_options import TrainOptions
 #from datasets.two_dim_multi_stream import create_dataset
 from models import create_model
-#from util.visualizer import Visualizer
+from util.visualizer import Visualizer
 #from torch.utils.tensorboard import SummaryWriter
 from tensorboardX import SummaryWriter
 #from evaluate import evaluate
@@ -52,8 +52,9 @@ if __name__ == '__main__':
     model = create_model(opt)      # create a model given opt.model and other options
     print('The number of training images = %d' % dataset_size)
 
-    #visualizer = Visualizer(opt)   # create a visualizer that display/save images and plots
-    #opt.visualizer = visualizer
+    if opt.display:
+        visualizer = Visualizer(opt)   # create a visualizer that display/save images and plots
+        opt.visualizer = visualizer
     total_iters = 0                # the total number of training iterations
     writter = SummaryWriter(os.path.join(opt.checkpoints_dir, opt.name, "logs"))
     model.save_dir = os.path.join(opt.checkpoints_dir, opt.name)
@@ -68,7 +69,8 @@ if __name__ == '__main__':
         epoch_start_time = time.time()  # timer for entire epoch
         iter_data_time = time.time()    # timer for data loading per iteration
         epoch_iter = 0                  # the number of training iterations in current epoch, reset to 0 every epoch
-        #visualizer.reset()              # reset the visualizer: make sure it saves the results to HTML at least once every epoch
+        if opt.display:
+            visualizer.reset()              # reset the visualizer: make sure it saves the results to HTML at least once every epoch
 
         for i,(data_s, data_t) in enumerate(zip(dataloader_s, dataloader_t)):
             data = {
@@ -105,24 +107,22 @@ if __name__ == '__main__':
                 torch.cuda.synchronize()
             optimize_time = (time.time() - optimize_start_time) / opt.batch_size * 0.005 + 0.995 * optimize_time
 
-            """
-            if total_iters % opt.display_freq == 0:   # display images on visdom and save images to a HTML file
+            if opt.display and total_iters % opt.display_freq == 0:   # display images on visdom and save images to a HTML file
                 save_result = total_iters % opt.update_html_freq == 0
                 model.compute_visuals()
                 visualizer.display_current_results(model.get_current_visuals(), epoch, save_result)
 
-            if total_iters % opt.print_freq == 0:    # print training losses and save logging information to the disk
+            if opt.display and total_iters % opt.print_freq == 0:    # print training losses and save logging information to the disk
                 losses = model.get_current_losses()
                 visualizer.print_current_losses(epoch, epoch_iter, losses, optimize_time, t_data)
                 for name in losses.keys():
-                    writter.add_scalar(name, losses[name], i + epoch*len(train_data_loader))
+                    writter.add_scalar(name, losses[name], i + epoch*len(dataloader_s))
                 if opt.display_id is None or opt.display_id > 0:
                     visualizer.plot_current_losses(epoch, float(epoch_iter) / dataset_size, losses)
                 if epoch > opt.seg_start_point:
                     if losses['real_S'] < min_seg_loss:
                         model.save_networks('best')
                         min_seg_loss = losses['real_S']
-            """
 
 
             """
